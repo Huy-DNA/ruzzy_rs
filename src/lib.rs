@@ -1,9 +1,9 @@
 #[derive(Clone, Copy)]
 pub struct FuzzyConfig {
-    threshold: usize,
-    insertion_penalty: Option<usize>,
-    deletion_penalty: Option<usize>,
-    substitution_penalty: Option<usize>,
+    pub threshold: usize,
+    pub insertion_penalty: Option<usize>,
+    pub deletion_penalty: Option<usize>,
+    pub substitution_penalty: Option<usize>,
 }
 
 pub fn fuzzy_match<'a, Value: ?Sized>(needle: &'a String, haystack: &'a Vec<(String, &'a Value)>, config: FuzzyConfig) -> Option<&'a Value> {
