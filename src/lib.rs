@@ -14,10 +14,10 @@ pub fn fuzzy_match<'a, Value: ?Sized>(needle: &'a String, haystack: &'a Vec<(Str
         if check_res.is_some() {
             let check_res = check_res.unwrap();
             threshold = check_res.1;
-            res = Some(hay.1);
+            res = Some(&hay.1);
         }
     }
-    res
+    res.copied()
 }
 
 fn check<'a>(needle: &'a String, candidate: &'a String, config: FuzzyConfig) -> Option<(&'a String, usize)> {
