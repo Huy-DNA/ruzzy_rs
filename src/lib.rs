@@ -8,7 +8,7 @@ pub struct FuzzyConfig {
     substitution_penalty: Option<usize>,
 }
 
-pub fn fuzzy_match<'a, Value>(needle: &'a String, haystack: &'a Vec<(String, &'a Value)>, config: FuzzyConfig) -> Option<&'a(String, &'a Value)> {
+pub fn fuzzy_match<'a, Value: ?Sized>(needle: &'a String, haystack: &'a Vec<(String, &'a Value)>, config: FuzzyConfig) -> Option<&'a Value> {
     let mut res = None;
     let mut threshold = config.threshold;
     for hay in haystack {
@@ -16,7 +16,7 @@ pub fn fuzzy_match<'a, Value>(needle: &'a String, haystack: &'a Vec<(String, &'a
         if check_res.is_some() {
             let check_res = check_res.unwrap();
             threshold = check_res.1;
-            res = Some(hay);
+            res = Some(hay.1);
         }
     }
     res
@@ -40,7 +40,7 @@ fn check<'a>(needle: &'a String, candidate: &'a String, config: FuzzyConfig) -> 
     let mut prev_row = vec![];
     prev_row.push(0);
     for i in 1..=needle.len() {
-        prev_row[i] = prev_row[i - 1] + deletion_penalty;
+        prev_row.push(prev_row[i - 1] + deletion_penalty);
     }
 
     let mut cur_row = vec![];
@@ -50,11 +50,11 @@ fn check<'a>(needle: &'a String, candidate: &'a String, config: FuzzyConfig) -> 
         for (needle_i, needle_c) in needle.chars().enumerate() {
             let mut min_cost = std::usize::MAX;
             if needle_c == candidate_c {
-                min_cost = *prev_row.get(needle_i).unwrap_or(&std::usize::MAX);
+                min_cost = *prev_row.get(needle_i).unwrap_or(&threshold);
             } else {
-                min_cost = *cur_row.get(needle_i).unwrap_or(&std::usize::MAX) + deletion_penalty;
-                min_cost = min(min_cost, *prev_row.get(needle_i + 1).unwrap_or(&std::usize::MAX) + insertion_penalty);
-                min_cost = min(min_cost, *prev_row.get(needle_i).unwrap_or(&std::usize::MAX) + substitution_penalty);
+                min_cost = *cur_row.get(needle_i).unwrap_or(&threshold) + deletion_penalty;
+                min_cost = min(min_cost, *prev_row.get(needle_i + 1).unwrap_or(&threshold) + insertion_penalty);
+                min_cost = min(min_cost, *prev_row.get(needle_i).unwrap_or(&threshold) + substitution_penalty);
             }
             if min_cost > 0 {
                 break;
@@ -67,4 +67,27 @@ fn check<'a>(needle: &'a String, candidate: &'a String, config: FuzzyConfig) -> 
 
     prev_row.last()
             .and_then(|i| if *i <= threshold { Some((candidate, *i)) } else { None })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_hello() {
+        let needle = "hello".to_string();
+        let haystack = vec![
+            ("hallo".to_string(), "this is wrong"),
+            ("hello".to_string(), "this is true"),
+            ("hell".to_string(), "this is wrong"),
+        ];
+        let config = FuzzyConfig {
+            threshold: 2,
+            insertion_penalty: None,
+            deletion_penalty: None,
+            substitution_penalty: None,
+        };
+        let result = fuzzy_match(&needle, &haystack, config);
+        assert_eq!(result, Some("this is true"));
+    }
 }
