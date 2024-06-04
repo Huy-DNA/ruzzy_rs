@@ -71,7 +71,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_hello() {
+    fn test_exact() {
         let needle = "hello".to_string();
         let haystack = vec![
             ("hallo".to_string(), "this is wrong"),
