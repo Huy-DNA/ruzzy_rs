@@ -124,4 +124,39 @@ mod tests {
         assert_eq!(result, Some("this is true 2"));
     }
 
+    #[test]
+    fn test_substitution() {
+        let needle = "youtube".to_string();
+        let haystack = vec![
+            ("routube".to_string(), "this is true"),
+            ("ytub".to_string(), "this is wrong"),
+            ("out".to_string(), "this is wrong"),
+        ];
+        let config = FuzzyConfig {
+            threshold: 2,
+            insertion_penalty: None,
+            deletion_penalty: None,
+            substitution_penalty: None,
+        };
+        let result = fuzzy_match(&needle, &haystack, config);
+        assert_eq!(result, Some("this is true"));
+    }
+
+    #[test]
+    fn test_substitution_tied_with_insertion() {
+        let needle = "youtube".to_string();
+        let haystack = vec![
+            ("routube".to_string(), "this is true 1"),
+            ("ytube".to_string(), "this is true 2"),
+            ("oe".to_string(), "this is wrong"),
+        ];
+        let config = FuzzyConfig {
+            threshold: 2,
+            insertion_penalty: None,
+            deletion_penalty: None,
+            substitution_penalty: None,
+        };
+        let result = fuzzy_match(&needle, &haystack, config);
+        assert_eq!(result, Some("this is true 2"));
+    }
 }
