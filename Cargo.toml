@@ -2,5 +2,7 @@
 name = "fuzzy"
 version = "0.1.0"
 edition = "2021"
+description = "A lightweight fuzzy matcher"
+license = "Apache-2.0"
 
 [dependencies]
