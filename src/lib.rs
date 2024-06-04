@@ -50,15 +50,12 @@ fn check<'a>(needle: &'a String, candidate: &'a String, config: FuzzyConfig) -> 
                 if needle_c == candidate_c {
                     *prev_row.get(needle_i).unwrap_or(&threshold)
                 } else {
-                    *[
+                    [
                         *cur_row.get(needle_i).unwrap_or(&threshold) + deletion_penalty,
                         *prev_row.get(needle_i + 1).unwrap_or(&threshold) + insertion_penalty,
                         *prev_row.get(needle_i).unwrap_or(&threshold) + substitution_penalty,
-                    ].iter().min().unwrap()
+                    ].into_iter().min().unwrap()
             };
-            if min_cost > threshold {
-                break;
-            }
             cur_row.push(min_cost);
         }
         prev_row = cur_row;
