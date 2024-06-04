@@ -50,11 +50,14 @@ fn check<'a>(needle: &'a String, candidate: &'a String, config: FuzzyConfig) -> 
         for (needle_i, needle_c) in needle.chars().enumerate() {
             let mut min_cost = std::usize::MAX;
             if needle_c == candidate_c {
-                min_cost = prev_row[needle_i];
+                min_cost = *prev_row.get(needle_i).unwrap_or(&std::usize::MAX);
             } else {
-                min_cost = cur_row[needle_i] + deletion_penalty;
-                min_cost = min(min_cost, prev_row[needle_i + 1] + insertion_penalty);
-                min_cost = min(min_cost, prev_row[needle_i] + substitution_penalty);
+                min_cost = *cur_row.get(needle_i).unwrap_or(&std::usize::MAX) + deletion_penalty;
+                min_cost = min(min_cost, *prev_row.get(needle_i + 1).unwrap_or(&std::usize::MAX) + insertion_penalty);
+                min_cost = min(min_cost, *prev_row.get(needle_i).unwrap_or(&std::usize::MAX) + substitution_penalty);
+            }
+            if min_cost > 0 {
+                break;
             }
             cur_row.push(min_cost);
         }
