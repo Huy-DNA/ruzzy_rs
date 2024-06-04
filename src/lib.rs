@@ -1,5 +1,3 @@
-use std::cmp::min;
-
 #[derive(Clone, Copy)]
 pub struct FuzzyConfig {
     threshold: usize,
@@ -48,15 +46,17 @@ fn check<'a>(needle: &'a String, candidate: &'a String, config: FuzzyConfig) -> 
     for candidate_c in candidate.chars() {
         cur_row.push(prev_row[0] + insertion_penalty);
         for (needle_i, needle_c) in needle.chars().enumerate() {
-            let mut min_cost = std::usize::MAX;
-            if needle_c == candidate_c {
-                min_cost = *prev_row.get(needle_i).unwrap_or(&threshold);
-            } else {
-                min_cost = *cur_row.get(needle_i).unwrap_or(&threshold) + deletion_penalty;
-                min_cost = min(min_cost, *prev_row.get(needle_i + 1).unwrap_or(&threshold) + insertion_penalty);
-                min_cost = min(min_cost, *prev_row.get(needle_i).unwrap_or(&threshold) + substitution_penalty);
-            }
-            if min_cost > 0 {
+            let min_cost = 
+                if needle_c == candidate_c {
+                    *prev_row.get(needle_i).unwrap_or(&threshold)
+                } else {
+                    *[
+                        *cur_row.get(needle_i).unwrap_or(&threshold) + deletion_penalty,
+                        *prev_row.get(needle_i + 1).unwrap_or(&threshold) + insertion_penalty,
+                        *prev_row.get(needle_i).unwrap_or(&threshold) + substitution_penalty,
+                    ].iter().min().unwrap()
+            };
+            if min_cost > threshold {
                 break;
             }
             cur_row.push(min_cost);
