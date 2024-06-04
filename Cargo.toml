@@ -1,5 +1,5 @@
 [package]
-name = "fuzzy"
+name = "ruzzy"
 version = "0.1.0"
 edition = "2021"
 description = "A lightweight fuzzy matcher"
