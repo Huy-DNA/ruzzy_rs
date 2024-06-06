@@ -6,7 +6,7 @@ pub struct FuzzyConfig {
     pub substitution_penalty: Option<usize>,
 }
 
-pub fn fuzzy_match<'a, Value: ?Sized>(needle: &'a String, haystack: &'a Vec<(String, &'a Value)>, config: FuzzyConfig) -> Option<&'a Value> {
+pub fn fuzzy_match<'a, Value: 'a>(needle: &'a String, haystack: &'a Vec<(String, Value)>, config: FuzzyConfig) -> Option<&'a Value> {
     let mut res = None;
     let mut threshold = config.threshold;
     for hay in haystack {
@@ -17,7 +17,7 @@ pub fn fuzzy_match<'a, Value: ?Sized>(needle: &'a String, haystack: &'a Vec<(Str
             res = Some(&hay.1);
         }
     }
-    res.copied()
+    res
 }
 
 fn check<'a>(needle: &'a String, candidate: &'a String, config: FuzzyConfig) -> Option<(&'a String, usize)> {
@@ -85,7 +85,7 @@ mod tests {
             substitution_penalty: None,
         };
         let result = fuzzy_match(&needle, &haystack, config);
-        assert_eq!(result, Some("this is true"));
+        assert_eq!(result, Some("this is true").as_ref());
     }
 
     #[test]
@@ -103,7 +103,7 @@ mod tests {
             substitution_penalty: None,
         };
         let result = fuzzy_match(&needle, &haystack, config);
-        assert_eq!(result, Some("this is true"));
+        assert_eq!(result, Some("this is true").as_ref());
     }
 
     #[test]
@@ -121,7 +121,7 @@ mod tests {
             substitution_penalty: None,
         };
         let result = fuzzy_match(&needle, &haystack, config);
-        assert_eq!(result, Some("this is true 2"));
+        assert_eq!(result, Some("this is true 2").as_ref());
     }
 
     #[test]
@@ -139,7 +139,7 @@ mod tests {
             substitution_penalty: None,
         };
         let result = fuzzy_match(&needle, &haystack, config);
-        assert_eq!(result, Some("this is true"));
+        assert_eq!(result, Some("this is true").as_ref());
     }
 
     #[test]
@@ -157,6 +157,6 @@ mod tests {
             substitution_penalty: None,
         };
         let result = fuzzy_match(&needle, &haystack, config);
-        assert_eq!(result, Some("this is true 2"));
+        assert_eq!(result, Some("this is true 2").as_ref());
     }
 }
