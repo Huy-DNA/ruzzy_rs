@@ -21,7 +21,7 @@ This crate performs fuzzy matching based on the Levenshtein distance a.k.a the e
 The only function that this crate exposes is:
 
 ```rust
-fn fuzzy_match<'a, Value: ?Sized>(needle: &'a String, haystack: &'a Vec<(String, &'a Value)>, config: FuzzyConfig) -> Option<&'a Value>;
+fn fuzzy_match<'a, Value: 'a>(needle: &'a String, haystack: &'a Vec<(String, Value)>, config: FuzzyConfig) -> Option<&'a Value>;
 ```
 
 where:
