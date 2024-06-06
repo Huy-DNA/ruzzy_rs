@@ -37,6 +37,6 @@ This function returns an `Option` that may wraps the corresponding value of the 
 `FuzzyConfig` allows you to tune the matching process. Currently, these configurations are supported:
 
 * `threshold`: If the edit distance is higher than this `threshold`, the key in the `haystack` is unacceptable and is not considered a match.
-* `insertion_penalty`: The cost of a character insertion in the `needle`.
-* `deletion_penalty`: The cost of a character deletion in the `needle`.
-* `substitution_penalty`: The cost of a character substition.
+* `insertion_penalty`: The cost of a character insertion in the `needle` (by default: `1`).
+* `deletion_penalty`: The cost of a character deletion in the `needle` (by default: `1`).
+* `substitution_penalty`: The cost of a character substition (by default: `2`).
