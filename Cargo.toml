@@ -1,11 +1,11 @@
 [package]
 name = "ruzzy"
-version = "0.1.4"
+version = "0.2.0"
 edition = "2021"
 description = "A lightweight fuzzy matcher"
 license = "Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/Huy-DNA/ruzzy_rs"
-keywords = ["fuzzy", "fuzzy-search", "fuzzy-matching"]
+keywords = ["fuzzy", "fuzzy-search", "fuzzy-matching", "ruzzy"]
 
 [dependencies]
